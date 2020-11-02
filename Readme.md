@@ -14,3 +14,5 @@
 * möjlighet att sätta en deadline
 * möjlighet att skriva en beskrivande text
 * spara data till textfil, ladda data vid start av programmet
+
+
