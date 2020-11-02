@@ -1,19 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using Dapper;
-
 namespace TodoApp
 {
     class TodoItem
     {
-
         private string title;
         private bool isDone;
         public string Title { get; set; }
-        private string deadline;
+        //private string deadline;
         public int Id { get; set; }
-
+        public DateTime finishedTime = DateTime.Now;
 
         //konstruktor
         public TodoItem() //Skriver ut nya uppgifter som ej gjorda
@@ -25,9 +20,10 @@ namespace TodoApp
 
         public string IsDoneDisplay()
         {
+
             if (isDone == true)
             {
-                return "[X]";
+                return $"[X] {finishedTime}";
             }
             else
                 return "[ ]";

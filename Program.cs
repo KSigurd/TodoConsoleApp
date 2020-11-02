@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
-using Dapper;
 
 namespace TodoApp
 {
@@ -19,58 +17,105 @@ namespace TodoApp
                 Console.Clear();
                 PrintMainMenu();
 
-                try
+                choice = Console.ReadKey();
+                switch (choice.Key)
                 {
-                    choice = Console.ReadKey();
-                    switch (choice.Key)
-                    {
+                    case ConsoleKey.V: //Visa listan
+                        Console.Clear();
+                        DisplayTodoList(todoManager);
+                        PrintIfListEmpty(todoManager);
+                        Console.Write("\nTryck på valfri tangent för att fortsätta");
+                        Console.ReadKey();
+                        break;
 
-                        case ConsoleKey.V: //Visa listan
-                            Console.Clear();
-                            DisplayTodoList(todoManager);
-                            PrintIfListEmpty(todoManager);
-                            Console.Write("\nTryck på valfri tangent för att fortsätta");
-                            Console.ReadKey();
-                            break;
+                    case ConsoleKey.L: //Lägga till
+                        Console.Clear();
+                        Console.WriteLine("Vad vill du lägga till?");
+                        title = Console.ReadLine();
+                        todoManager.AddTodoItem(title); 
+                        break;
 
-                        case ConsoleKey.L: //Lägga till
-                            Console.Clear();
-                            Console.WriteLine("Vad vill du lägga till?");
-                            title = Console.ReadLine();
-                            todoManager.AddTodoItem(title);
-                            //GÖR EN FUNKTION DÄR DET ÄR MÖJLIGT ATT ADDERA BESKRIVANDE TEXT!!!!
-                            break;
-
-                        case ConsoleKey.K: //Klarmarkera uppgift
-                            Console.Clear();
+                    case ConsoleKey.K: //Klarmarkera uppgift
+                        Console.Clear();
+                        endLoop = true;
+                        do
+                        {
                             DisplayTodoList(todoManager);
                             Console.WriteLine("Vilken uppgift vill du markera som färdig?");
-                            index = int.Parse(Console.ReadLine());
-                            todoManager.UpdateStatus(index);
-                            break;
+                            try
+                            {
+                                index = int.Parse(Console.ReadLine());
+                                todoManager.UpdateStatus(index);
+                                endLoop = false;
+                            }
+                            catch (System.Exception e)
+                            {
+                                Console.WriteLine($"Felaktig inmatning. Gör om igen och följ instruktionerna! {e}");
+                                Console.WriteLine("Tryck på valfri tangent för att fortsätta");
+                                Console.ReadKey();
+                                Console.Clear();
+                            }
+                        } while (endLoop);
+                        break;
 
-                        case ConsoleKey.T: //Ta bort uppgift
+                    case ConsoleKey.M: //Ändra status till ogjord
+                        endLoop = true;
+                        do
+                        {
+                            Console.Clear();
+                            Console.WriteLine("Vilken uppgift vill du ångra status på?");
+                            DisplayTodoList(todoManager);
+
+                            try
+                            {                                
+                                index = int.Parse(Console.ReadLine());
+                                todoManager.UndoUpdateStatus(index);
+                                endLoop = false;
+                            }
+                            catch (System.Exception e)
+                            {
+                                Console.WriteLine($"Felaktig inmatning. Gör om igen och följ instruktionerna! {e}");
+                                Console.WriteLine("Tryck på valfri tangent för att fortsätta");
+                                Console.ReadKey();
+                                Console.Clear();
+                            }
+                        } while (endLoop);
+                        break;
+
+                    case ConsoleKey.T: //Ta bort uppgift
+                        do
+                        {
+                            endLoop = true;
                             DisplayTodoList(todoManager);
                             Console.WriteLine("Välj vilket index som du vill ta bort");
-                            index = int.Parse(Console.ReadLine());
-                            todoManager.RemoveTodoItem(index);
-                            break;
+                            try
+                            {
+                                index = int.Parse(Console.ReadLine());
+                                todoManager.RemoveTodoItem(index);
+                                endLoop = false;
+                            }
+                            catch (System.Exception e)
+                            {
+                                Console.WriteLine($"Felaktig inmatning. Gör om igen och följ instruktionerna! {e}");
+                                Console.WriteLine("Tryck på valfri tangent för att fortsätta");
+                                Console.ReadKey();
+                                Console.Clear();
+                            }
+                        } while (endLoop);
+                        break;
 
-                        case ConsoleKey.E:
+                    case ConsoleKey.E:
+                        Environment.Exit(0);
+                        break;                        
+
+                    default:
+                        if(choice.Key == ConsoleKey.Escape)
+                        {
                             Environment.Exit(0);
-                            break;
-
-                        default:
-                            Console.WriteLine("\nFelaktigt val! Tryck på valfri tangent för att fortsätta");
-                            Console.ReadKey();
-                            break;
-                    }
-                }
-                catch (System.Exception e)
-                {
-                    Console.WriteLine($"Felaktig inmatning. Gör om igen och följ instruktionerna! {e}");
-                    Console.WriteLine("Tryck på valfri tangent för att fortsätta");
-                    Console.ReadKey();
+                        }
+                        Console.Write("\nFelaktigt val! Tryck på valfri tangent för att fortsätta");
+                        Console.ReadKey();
+                        break;
                 }
             }
 
@@ -81,6 +126,7 @@ namespace TodoApp
                 Console.WriteLine("[V]isa Todo-listan");
                 Console.WriteLine("[L]ägg till uppgift");
                 Console.WriteLine("[K]larmarkera uppgift");
+                Console.WriteLine("[M]akulera status på uppgift");
                 Console.WriteLine("[T]a bort uppgift");
                 Console.WriteLine("[A]vsluta");
                 Console.Write("Val: ");

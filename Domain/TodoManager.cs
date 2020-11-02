@@ -5,7 +5,7 @@ using Dapper;
 namespace TodoApp
 {
     class TodoManager
-    {        
+    {
         private readonly string connectionString;
 
         public TodoManager(string connectionString)
@@ -26,19 +26,27 @@ namespace TodoApp
         }
         public void UpdateStatus(int todoId)
         {
-            
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Execute("UPDATE TODO SET isDone = 1 WHERE Id = " + todoId);
+            }
+        }
+
+        public void UndoUpdateStatus(int todoId)
+        {            
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Execute("UPDATE TODO SET isDone = 0 WHERE Id = " + todoId);
             }
         }
         public void RemoveTodoItem(int todoId)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Execute("DELETE FROM TODO WHERE Id = @Id", new { Id = todoId } );
+                connection.Execute("DELETE FROM TODO WHERE Id = @Id", new { Id = todoId });
             }
-        }        
+        }
         public IEnumerable<TodoItem> GetTodos()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
